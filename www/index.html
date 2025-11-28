@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>MEDI-GO — Mobile</title>
+
+  <!-- CSS separado -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div class="app" id="app">
+  <header>
+    <div class="logo">MG</div>
+    <div>
+      <h1>MEDI-GO</h1>
+      <div class="small">Lembretes para idoso & cuidador</div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- LOGIN -->
+    <section id="screen-login" class="card screen">
+      <h2 class="large-text">Entrar</h2>
+
+      <label for="login-email">Email</label>
+      <input id="login-email" type="email" placeholder="exemplo@dominio.com" />
+
+      <label for="login-pass">Senha</label>
+      <input id="login-pass" type="password" placeholder="••••••" />
+
+      <div class="row">
+        <button class="btn big" id="btn-login">Entrar</button>
+        <button class="btn ghost big" id="btn-open-register">Criar</button>
+      </div>
+
+      <div class="small center mt8">Protótipo local + Nuvem Firebase</div>
+    </section>
+
+    <!-- CADASTRO -->
+    <section id="screen-register" class="card screen" style="display:none">
+      <h2 class="large-text">Cadastrar</h2>
+
+      <!-- SELEÇÃO DE PAPEL NO TOPO -->
+      <label>Você é</label>
+      <select id="reg-role">
+        <option value="cuidador">Cuidador / Familiar</option>
+        <option value="idoso">Idoso</option>
+      </select>
+      
+      <!-- Campos básicos do Usuário (Sempre necessários) -->
+      <div id="user-basic-fields">
+        <label>Nome completo</label>
+        <input id="reg-name" type="text" placeholder="Seu nome" />
+
+        <label>Email</label>
+        <input id="reg-email" type="email" placeholder="exemplo@dominio.com" />
+
+        <label>Senha</label>
+        <input id="reg-pass" type="password" placeholder="••••••" />
+      </div>
+
+      <!-- ESTA SEÇÃO SÓ APARECE SE FOR 'CUIDADOR' -->
+      <div id="elder-section" style="display:none">
+        <h3 class="small" style="margin-top:10px;">Dados do Paciente</h3>
+        <label>Nome do paciente</label>
+        <input id="elder-name" placeholder="Nome de quem será monitorado" />
+
+        <label>Data de nascimento do paciente</label>
+        <input id="elder-birth" type="date" />
+      </div>
+
+      <div class="row">
+        <button class="btn big" id="btn-register">Cadastrar</button>
+        <button class="btn ghost big" id="btn-cancel-register">Cancelar</button>
+      </div>
+    </section>
+
+    <!-- HOME -->
+    <section id="screen-home" class="card screen" style="display:none">
+      <h2 class="large-text">Início</h2>
+
+      <div class="row-between mb8">
+        <div>
+          <div class="small">Olá,</div>
+          <div id="me-name" class="fw800">—</div>
+        </div>
+        <div class="pill" id="me-role">—</div>
+      </div>
+
+      <div class="card p10">
+        <div class="small">Próximo lembrete</div>
+        <div id="next-reminder" class="fw800 mt6">Nenhum</div>
+      </div>
+
+      <div class="mt10">
+        <h3 class="large-text">Atividades recentes</h3>
+        <pre id="activity-feed" class="small" style="white-space:pre-wrap">Sem atividade</pre>
+      </div>
+    </section>
+
+    <!-- AGENDA -->
+    <section id="screen-agenda" class="card screen" style="display:none">
+      <h2 class="large-text">Agenda</h2>
+
+      <div class="card">
+        <label>Título</label>
+        <input id="appt-title" placeholder="Consulta com Dr. Fulano" />
+
+        <label>Data e hora</label>
+        <input id="appt-when" type="datetime-local" />
+
+        <label>Paciente</label>
+        <select id="appt-elder"></select>
+
+        <div class="row">
+          <button class="btn big" id="btn-add-appt">Salvar</button>
+          <button class="btn ghost big" id="btn-clear-appt">Limpar</button>
+        </div>
+      </div>
+
+      <h3 class="large-text mt10">Próximas consultas</h3>
+      <div id="appts-list"></div>
+    </section>
+
+    <!-- COMUNIDADE -->
+    <section id="screen-community" class="card screen" style="display:none">
+      <h2 class="large-text">Comunidade</h2>
+
+      <div class="small">Adicione cuidadores ao grupo do idoso.</div>
+
+      <div class="card">
+        <label>Idoso</label>
+        <select id="comm-elder"></select>
+
+        <label>Convidar por email</label>
+        <input id="comm-email" />
+
+        <div class="row">
+          <button class="btn big" id="btn-invite">Convidar</button>
+          <button class="btn ghost big" id="btn-refresh-comm">Atualizar</button>
+        </div>
+      </div>
+
+      <h3 class="large-text mt10">Membros</h3>
+      <div id="comm-members"></div>
+    </section>
+
+    <!-- ALARMES -->
+    <section id="screen-alarmes" class="card screen" style="display:none">
+      <h2 class="large-text">Alarmes</h2>
+
+      <div class="card">
+        <label>Idoso</label>
+        <select id="alarm-elder"></select>
+
+        <label>Nome do remédio</label>
+        <input id="alarm-name" placeholder="Ex.: Paracetamol 500mg" />
+
+        <label>Horários (08:00, 20:00)</label>
+        <input id="alarm-times" />
+
+        <label>Início</label>
+        <input id="alarm-start" type="date" />
+
+        <label>Duração (dias)</label>
+        <input id="alarm-duration" type="number" value="7" min="1" />
+
+        <label>Janela de confirmação (min)</label>
+        <input id="confirm-window" type="number" value="1" min="1" />
+
+        <div class="row">
+          <button class="btn big" id="btn-save-alarm">Salvar</button>
+          <button class="btn ghost big" id="btn-clear-alarm">Limpar</button>
+        </div>
+      </div>
+
+      <h3 class="large-text mt10">Ativos</h3>
+      <div id="alarms-list"></div>
+    </section>
+
+    <!-- CONFIGURAÇÕES (Onde o Logout vive) -->
+    <section id="screen-config" class="card screen" style="display:none">
+      <h2 class="large-text">Configurações</h2>
+      <div class="col gap8">
+        <button class="btn ghost big" id="btn-edit-profile">Editar perfil</button>
+        <button class="btn ghost big" id="btn-notif-perm">Permissão de notificações</button>
+        <button class="btn ghost big" id="btn-logout">Sair da conta</button>
+      </div>
+    </section>
+
+    <!-- MODAL -->
+    <div class="sheet" id="sheet-confirm">
+      <div id="sheet-content"></div>
+      <div class="row mt10">
+        <button class="btn" id="sheet-confirm-btn">Confirmar</button>
+        <button class="btn ghost" id="sheet-close-btn">Fechar</button>
+      </div>
+    </div>
+
+  </main>
+
+  <nav class="bottom">
+    <button id="nav-home" class="active">Início</button>
+    <button id="nav-agenda">Agenda</button>
+    <button id="nav-community">Comunidade</button>
+    <button id="nav-alarmes">Alarme</button>
+    <button id="nav-config">Config</button>
+  </nav>
+
+  <div id="toast-area"></div>
+</div>
+
+<!-- IMPORTANTE: A ORDEM DESSES SCRIPTS É O SEGREDO -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics-compat.js"></script>
+
+<script src="app.js"></script>
+
+</body>
+</html>
