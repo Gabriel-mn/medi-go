@@ -1,0 +1,15 @@
+# Capacitor (não versionar)
+android/
+ios/
+www/
+
+# Node
+node_modules/
+npm-debug.log
+package-lock.json
+
+# IDEs e sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

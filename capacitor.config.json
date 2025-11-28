@@ -1,0 +1,6 @@
+{
+  "appId": "com.example.medigo",
+  "appName": "medi-go",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}
