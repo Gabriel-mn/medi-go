@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Master Admin - MEDI-GO</title>
-    <!-- Chart.js para gráficos bonitos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -12,10 +11,8 @@
             color: #e2e8f0;
             font-family: 'Segoe UI', system-ui, sans-serif;
             padding: 0; margin: 0;
-            display: none; /* Começa oculto por segurança */
+            display: none;
         }
-        
-        /* Barra lateral e Layout */
         .layout { display: flex; min-height: 100vh; }
         .sidebar {
             width: 250px;
@@ -24,11 +21,8 @@
             border-right: 1px solid #334155;
         }
         .content { flex: 1; padding: 30px; }
-
         h1 { color: #38bdf8; font-size: 24px; margin-bottom: 5px; }
         .subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 30px; }
-
-        /* Cards de Estatísticas (KPIs) */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -44,8 +38,6 @@
         }
         .kpi-value { font-size: 32px; font-weight: bold; color: #fff; }
         .kpi-label { color: #94a3b8; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* Área dos Gráficos */
         .charts-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -58,8 +50,6 @@
             border-radius: 12px;
             border: 1px solid #334155;
         }
-
-        /* Tabelas de Dados Brutos */
         .data-section {
             background: #1e293b;
             border-radius: 12px;
@@ -76,13 +66,11 @@
             align-items: center;
         }
         .timestamp { font-size: 12px; color: #cbd5e1; font-weight: normal; }
-        
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
         th { text-align: left; background: #0f172a; color: #94a3b8; padding: 12px 20px; }
         td { padding: 12px 20px; border-bottom: 1px solid #334155; color: #cbd5e1; }
         tr:last-child td { border-bottom: none; }
         tr:hover { background-color: #273548; }
-
         button.refresh {
             background: #38bdf8; color: #0f172a; border: none;
             padding: 10px 20px; border-radius: 8px; font-weight: bold;
@@ -115,7 +103,6 @@
             <button class="refresh" onclick="location.reload()">🔄 Atualizar</button>
         </div>
 
-        <!-- KPIs (Indicadores) -->
         <div class="kpi-grid">
             <div class="kpi-card">
                 <div class="kpi-label">Total de Usuários</div>
@@ -135,7 +122,6 @@
             </div>
         </div>
 
-        <!-- Gráficos -->
         <div class="charts-grid">
             <div class="chart-container">
                 <canvas id="chartUsers"></canvas>
@@ -151,7 +137,6 @@
     </div>
 </div>
 
-<!-- FIREBASE (Obrigatório para ler o banco) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 

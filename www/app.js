@@ -1,10 +1,6 @@
-/* ============================================================
-   CONFIGURAÇÃO DO FIREBASE
-   ============================================================ */
 let db = null;
 
 try {
-  // SUAS CHAVES (Já configuradas)
   const firebaseConfig = {
     apiKey: "AIzaSyDdeLTGazq7qSahG4fYUtAWorndqaFCCJI",
     authDomain: "projeto-a3-medi-go.firebaseapp.com",
@@ -18,27 +14,20 @@ try {
   if (typeof firebase !== 'undefined') {
     firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
-    console.log("✅ Firebase conectado!");
+    console.log("Firebase conectado!");
   } else {
-    console.error("❌ Firebase não encontrado no HTML.");
+    console.error("Firebase não encontrado no HTML.");
   }
 } catch (error) {
-  console.error("⚠️ Erro Firebase:", error);
+  console.error("Erro Firebase:", error);
 }
-
-/* ============================================================
-   LÓGICA DO APP
-   ============================================================ */
 
 function uid(prefix='id'){ return prefix + '_' + Math.random().toString(36).slice(2,9); }
 function nowISO(){ return new Date().toISOString(); }
 function read(k){ try{ return JSON.parse(localStorage.getItem(k)||'null'); }catch(e){ return null; } }
 
-// CORREÇÃO DE SEGURANÇA: Adicionado parâmetro 'saveToCloud'
 function write(k, v, saveToCloud = true){ 
   localStorage.setItem(k, JSON.stringify(v)); 
-  
-  // Só envia para a nuvem se o parâmetro permitir E se o banco existir
   if (db && saveToCloud) {
     db.collection('projeto_escola').doc(k).set({
       dados: v,
@@ -48,7 +37,6 @@ function write(k, v, saveToCloud = true){
 }
 
 function init(){
-  // Inicializa variáveis locais sem sobrescrever a nuvem
   if(!read('users')) localStorage.setItem('users', '[]');
   if(!read('elders')) localStorage.setItem('elders', '[]');
   if(!read('communities')) localStorage.setItem('communities', '{}');
@@ -60,7 +48,6 @@ function init(){
 }
 init();
 
-/* UI Helpers */
 function toast(msg, ttl=3000){
   const d=document.createElement('div');
   d.className='toast';
@@ -70,7 +57,6 @@ function toast(msg, ttl=3000){
   setTimeout(()=>d.remove(), ttl);
 }
 
-// --- FUNÇÃO DE NAVEGAÇÃO SEGURA ---
 function showScreenId(id){
   const user = getCurrentUser();
   const nav = document.querySelector('nav.bottom');
@@ -94,7 +80,6 @@ function showScreenId(id){
   if(btn) btn.classList.add('active');
 }
 
-/* EVENT LISTENERS */
 function safeListen(id, event, callback) {
   const el = document.getElementById(id);
   if (el) el.addEventListener(event, callback);
@@ -130,12 +115,11 @@ safeListen('btn-register', 'click', async ()=>{
   
   if(!name || !email || !pass){ toast('Preencha todos os campos'); return; }
   
-  // Antes de registrar, garante que temos a lista mais atual para não sobrescrever ninguém
   await syncCollection('users');
 
   const u = registerUser(name,email,pass,role, elderData);
   if(u){
-    write('currentUser', u, false); // Login local apenas
+    write('currentUser', u, false);
     renderCurrentUser(); 
   }
 });
@@ -145,25 +129,20 @@ safeListen('btn-login', 'click', async ()=>{
   const p = document.getElementById('login-pass').value;
   if(!e || !p){ toast('Preencha email e senha'); return; }
   
-  // 1. FORÇA A SINCRONIZAÇÃO DA NUVEM PARA O LOCAL
-  // Isso garante que se você limpou o cache, baixará o 'Faustão' de volta.
   await syncCollection('users');
 
-  // 2. Tenta logar
   login(e,p);
 });
 
 safeListen('btn-logout', 'click', ()=> { if(confirm('Deseja sair?')) logout(); });
 
-
-/* LÓGICA DE USUÁRIO */
 function registerUser(name,email,pass,role, elderData){
   const users = read('users') || [];
   if(users.find(u=>u.email===email)){ toast('Email já cadastrado'); return null; }
   
   const userFull = {id: uid('u'), name, email, pass, role};
   users.push(userFull);
-  write('users', users, true); // Salva na nuvem
+  write('users', users, true);
   
   if(role === 'idoso' || (role === 'cuidador' && elderData && elderData.name)){
     const elders = read('elders') || [];
@@ -196,7 +175,7 @@ function login(email,pass){
   const userApp = {...u};
   delete userApp.pass; 
   
-  write('currentUser', userApp, false); // Apenas sessão local
+  write('currentUser', userApp, false);
   
   toast('Bem-vindo, ' + u.name);
   renderCurrentUser(); 
@@ -224,7 +203,6 @@ function renderCurrentUser(){
   renderAllData(); 
 }
 
-/* SELECTS E LISTAS */
 function populateEldersSelects(){
   const elders = read('elders') || [];
   ['appt-elder','comm-elder','alarm-elder'].forEach(id => {
@@ -240,7 +218,6 @@ function populateEldersSelects(){
   });
 }
 
-// --- AGENDA ---
 safeListen('btn-add-appt', 'click', ()=>{
   const title = document.getElementById('appt-title').value.trim();
   const when = document.getElementById('appt-when').value;
@@ -269,13 +246,13 @@ function renderAppts(){
     cont.appendChild(div);
   });
 }
+
 window.removeAppt = function(id){
   if(!confirm('Excluir?')) return;
   write('appts', (read('appts')||[]).filter(x=>x.id!==id), true);
   renderAppts();
 }
 
-// --- COMUNIDADE ---
 safeListen('btn-invite', 'click', ()=>{
   const elderId = document.getElementById('comm-elder').value;
   const email = document.getElementById('comm-email').value.trim();
@@ -290,7 +267,9 @@ safeListen('btn-invite', 'click', ()=>{
   renderCommunityMembers();
   toast('Adicionado!');
 });
+
 safeListen('btn-refresh-comm', 'click', renderCommunityMembers);
+
 function renderCommunityMembers(){
   const container = document.getElementById('comm-members');
   if(!container) return;
@@ -305,6 +284,7 @@ function renderCommunityMembers(){
     <button class="btn ghost" onclick="removeMember('${elderId}','${uid}')">Remover</button></div>`;
   });
 }
+
 window.removeMember = function(eid, uid){
   if(!confirm('Remover?')) return;
   const c = read('communities');
@@ -313,7 +293,6 @@ window.removeMember = function(eid, uid){
   renderCommunityMembers();
 }
 
-// --- ALARMES ---
 safeListen('btn-save-alarm', 'click', ()=>{
   const elderId = document.getElementById('alarm-elder').value;
   const name = document.getElementById('alarm-name').value.trim();
@@ -326,6 +305,7 @@ safeListen('btn-save-alarm', 'click', ()=>{
   toast('Alarme salvo');
   document.getElementById('alarm-name').value='';
 });
+
 function renderAlarms(){
   const cont = document.getElementById('alarms-list');
   if(!cont) return;
@@ -336,20 +316,18 @@ function renderAlarms(){
     <button class="btn ghost" onclick="removeAlarm('${al.id}')">Excluir</button>`;
   });
 }
+
 window.removeAlarm = function(id){
   if(!confirm('Excluir?')) return;
   write('alarms', (read('alarms')||[]).filter(x=>x.id!==id), true);
   renderAlarms();
 }
 
-// --- GERENCIADOR GERAL ---
 function renderAllData(){
   renderAppts();
   renderAlarms();
   renderCommunityMembers();
 }
-
-// --- SINCRONIZAÇÃO SEGURA ---
 
 async function syncCollection(key) {
     if (!db) return false;
@@ -359,32 +337,27 @@ async function syncCollection(key) {
         if (doc.exists) {
             const cloudData = doc.data().dados;
             if (cloudData !== undefined) {
-                // Atualiza o local com o dado da nuvem (NÃO SOBRESCREVE NUVEM)
                 localStorage.setItem(key, JSON.stringify(cloudData));
                 return true;
             }
         }
     } catch (e) {
-        console.error(`❌ Erro sync ${key}`, e);
+        console.error(`Erro sync ${key}`, e);
     }
     return false;
 }
 
-// Função para criar Demo APENAS LOCAL (Não toca na nuvem)
 function createDemoDataLocalOnly() {
     const u = {id:uid('u'), name:'Ana Cuidadora (Local)', email:'cuidadora@demo', pass:'1234', role:'cuidador'};
-    
-    // ATENÇÃO: write com 3º parâmetro FALSE -> Não envia para nuvem
     write('users', [u], false); 
-    console.log("⚠️ Modo Offline/Demo Ativado (Dados locais apenas)");
+    console.log("Modo Offline/Demo Ativado (Dados locais apenas)");
 }
 
-// Inicialização Inteligente
 async function initSyncAndRender() {
     const collectionsToSync = ['users', 'elders', 'communities', 'alarms', 'appts', 'activity', 'pending'];
     
     if ((read('users') || []).length === 0) {
-        console.log("🚀 Sincronizando...");
+        console.log("Sincronizando...");
         let usersFound = false;
         
         for (const key of collectionsToSync) {
@@ -392,8 +365,6 @@ async function initSyncAndRender() {
             if (key === 'users' && success) usersFound = true;
         }
         
-        // Se não achou nada na nuvem, cria demo LOCALMENTE para não travar
-        // MAS NÃO ENVIA PARA O FIREBASE PARA NÃO APAGAR DADOS DE OUTROS
         if (!usersFound) {
             createDemoDataLocalOnly();
         }

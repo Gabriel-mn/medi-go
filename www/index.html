@@ -4,8 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <title>MEDI-GO — Mobile</title>
-
-  <!-- CSS separado -->
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -21,7 +19,6 @@
 
   <main id="main">
 
-    <!-- LOGIN -->
     <section id="screen-login" class="card screen">
       <h2 class="large-text">Entrar</h2>
 
@@ -39,18 +36,15 @@
       <div class="small center mt8">Protótipo local + Nuvem Firebase</div>
     </section>
 
-    <!-- CADASTRO -->
     <section id="screen-register" class="card screen" style="display:none">
       <h2 class="large-text">Cadastrar</h2>
 
-      <!-- SELEÇÃO DE PAPEL NO TOPO -->
       <label>Você é</label>
       <select id="reg-role">
         <option value="cuidador">Cuidador / Familiar</option>
         <option value="idoso">Idoso</option>
       </select>
       
-      <!-- Campos básicos do Usuário (Sempre necessários) -->
       <div id="user-basic-fields">
         <label>Nome completo</label>
         <input id="reg-name" type="text" placeholder="Seu nome" />
@@ -62,7 +56,6 @@
         <input id="reg-pass" type="password" placeholder="••••••" />
       </div>
 
-      <!-- ESTA SEÇÃO SÓ APARECE SE FOR 'CUIDADOR' -->
       <div id="elder-section" style="display:none">
         <h3 class="small" style="margin-top:10px;">Dados do Paciente</h3>
         <label>Nome do paciente</label>
@@ -78,7 +71,6 @@
       </div>
     </section>
 
-    <!-- HOME -->
     <section id="screen-home" class="card screen" style="display:none">
       <h2 class="large-text">Início</h2>
 
@@ -101,7 +93,6 @@
       </div>
     </section>
 
-    <!-- AGENDA -->
     <section id="screen-agenda" class="card screen" style="display:none">
       <h2 class="large-text">Agenda</h2>
 
@@ -125,7 +116,6 @@
       <div id="appts-list"></div>
     </section>
 
-    <!-- COMUNIDADE -->
     <section id="screen-community" class="card screen" style="display:none">
       <h2 class="large-text">Comunidade</h2>
 
@@ -148,7 +138,6 @@
       <div id="comm-members"></div>
     </section>
 
-    <!-- ALARMES -->
     <section id="screen-alarmes" class="card screen" style="display:none">
       <h2 class="large-text">Alarmes</h2>
 
@@ -181,7 +170,6 @@
       <div id="alarms-list"></div>
     </section>
 
-    <!-- CONFIGURAÇÕES (Onde o Logout vive) -->
     <section id="screen-config" class="card screen" style="display:none">
       <h2 class="large-text">Configurações</h2>
       <div class="col gap8">
@@ -191,7 +179,6 @@
       </div>
     </section>
 
-    <!-- MODAL -->
     <div class="sheet" id="sheet-confirm">
       <div id="sheet-content"></div>
       <div class="row mt10">
@@ -213,7 +200,6 @@
   <div id="toast-area"></div>
 </div>
 
-<!-- IMPORTANTE: A ORDEM DESSES SCRIPTS É O SEGREDO -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics-compat.js"></script>
